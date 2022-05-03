@@ -3,23 +3,27 @@ package util
 import "math"
 
 type Triplex struct {
-	x, y, z float64
+	X, Y, Z float64
+}
+
+func MakeTriplex(x, y, z float64) Triplex {
+	return Triplex{x, y, z}
 }
 
 func (t Triplex) Add(o Triplex) Triplex {
-	return Triplex{t.x + o.x, t.y + o.y, t.z + o.z}
+	return Triplex{t.X + o.X, t.Y + o.Y, t.Z + o.Z}
 }
 
 func (t Triplex) Multiply(m float64) Triplex {
-	return Triplex{t.x * m, t.y * m, t.z * m}
+	return Triplex{t.X * m, t.Y * m, t.Z * m}
 }
 
 func (t Triplex) Pow(exp float64) Triplex {
 	r := t.Length()
-	theta := math.Atan2(t.y, t.x)
-	phi := math.Acos(t.z / r)
-	if math.IsNaN(phi) {
-		phi = 0
+	theta := math.Acos(t.Z / r)
+	phi := math.Atan2(t.Y, t.X)
+	if math.IsNaN(theta) {
+		theta = 0
 	}
 	nr := math.Pow(r, exp)
 	ntheta := exp * theta
@@ -32,9 +36,9 @@ func (t Triplex) Pow(exp float64) Triplex {
 }
 
 func (t Triplex) LengthSquared() float64 {
-	return t.x*t.x + t.y*t.y + t.z*t.z
+	return t.X*t.X + t.Y*t.Y + t.Z*t.Z
 }
 
 func (t Triplex) Length() float64 {
-	return math.Sqrt(t.x*t.x + t.y*t.y + t.z*t.z)
+	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z)
 }
