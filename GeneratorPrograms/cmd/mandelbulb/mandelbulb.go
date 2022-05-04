@@ -49,5 +49,8 @@ func main() {
 		return color
 	})
 
+	region.Hollow()
+
+	region.CountBlocks()
 	region.CreateDump()
 }

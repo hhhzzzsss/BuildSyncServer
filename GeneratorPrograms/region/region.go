@@ -61,6 +61,49 @@ func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 	bar.Finish()
 }
 
+func (r *Region) Hollow() {
+	fmt.Println("Hollowing...")
+	var isSurface [dim][dim][dim]bool
+	for y := 1; y < dim-1; y++ {
+		for z := 1; z < dim-1; z++ {
+			for x := 1; x < dim-1; x++ {
+				if r.ids[y][z][x+1] == 0 ||
+					r.ids[y][z][x-1] == 0 ||
+					r.ids[y][z+1][x] == 0 ||
+					r.ids[y][z-1][x] == 0 ||
+					r.ids[y+1][z][x] == 0 ||
+					r.ids[y-1][z][x] == 0 {
+					isSurface[y][z][x] = true
+				}
+			}
+		}
+	}
+	for y := 1; y < dim-1; y++ {
+		for z := 1; z < dim-1; z++ {
+			for x := 1; x < dim-1; x++ {
+				if !isSurface[y][z][x] {
+					r.ids[y][z][x] = 0
+				}
+			}
+		}
+	}
+}
+
+func (r *Region) CountBlocks() {
+	fmt.Print("Counting blocks...")
+	numBlocks := 0
+	for y := 1; y < dim-1; y++ {
+		for z := 1; z < dim-1; z++ {
+			for x := 1; x < dim-1; x++ {
+				if r.ids[y][z][x] != 0 {
+					numBlocks++
+				}
+			}
+		}
+	}
+	fmt.Printf("\rCounted a total of %d non-air blocks in the region\n", numBlocks)
+}
+
 func (r *Region) CreateDump() {
 	r.Validate()
 
