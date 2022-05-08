@@ -11,4 +11,4 @@ usercache.json
 version-history.json
 whitelist.json
 **/REGION_DUMP
-plugins/*
+plugins/*/
