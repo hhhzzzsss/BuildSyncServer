@@ -11,10 +11,10 @@ import (
 
 const temp_path string = "TEMP_REGION_DUMP"
 const output_path string = "../plugins/BuildSync/REGION_DUMP"
-const dim int = 256
+const Dim int = 256
 
 type Region struct {
-	ids     [dim][dim][dim]int
+	ids     [Dim][Dim][Dim]int
 	palette []string
 }
 
@@ -33,9 +33,9 @@ func (r *Region) Get(x, y, z int) int {
 func (r *Region) ForEach(idGenerator func(x, y, z int) int) {
 	var bar util.ProgressBar
 	bar.Initialize(256)
-	for y := 0; y < dim; y++ {
-		for z := 0; z < dim; z++ {
-			for x := 0; x < dim; x++ {
+	for y := 0; y < Dim; y++ {
+		for z := 0; z < Dim; z++ {
+			for x := 0; x < Dim; x++ {
 				r.ids[y][z][x] = idGenerator(x, y, z)
 			}
 		}
@@ -47,12 +47,12 @@ func (r *Region) ForEach(idGenerator func(x, y, z int) int) {
 func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 	var bar util.ProgressBar
 	bar.Initialize(256)
-	for y := 0; y < dim; y++ {
-		for z := 0; z < dim; z++ {
-			for x := 0; x < dim; x++ {
-				xNorm := 2.0*float64(x)/float64(dim) - 1.0
-				yNorm := 2.0*float64(y)/float64(dim) - 1.0
-				zNorm := 2.0*float64(z)/float64(dim) - 1.0
+	for y := 0; y < Dim; y++ {
+		for z := 0; z < Dim; z++ {
+			for x := 0; x < Dim; x++ {
+				xNorm := 2.0*float64(x)/float64(Dim) - 1.0
+				yNorm := 2.0*float64(y)/float64(Dim) - 1.0
+				zNorm := 2.0*float64(z)/float64(Dim) - 1.0
 				r.ids[y][z][x] = idGenerator(xNorm, yNorm, zNorm)
 			}
 		}
@@ -63,10 +63,10 @@ func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 
 func (r *Region) Hollow() {
 	fmt.Println("Hollowing...")
-	var isSurface [dim][dim][dim]bool
-	for y := 1; y < dim-1; y++ {
-		for z := 1; z < dim-1; z++ {
-			for x := 1; x < dim-1; x++ {
+	var isSurface [Dim][Dim][Dim]bool
+	for y := 1; y < Dim-1; y++ {
+		for z := 1; z < Dim-1; z++ {
+			for x := 1; x < Dim-1; x++ {
 				if r.ids[y][z][x+1] == 0 ||
 					r.ids[y][z][x-1] == 0 ||
 					r.ids[y][z+1][x] == 0 ||
@@ -78,9 +78,9 @@ func (r *Region) Hollow() {
 			}
 		}
 	}
-	for y := 1; y < dim-1; y++ {
-		for z := 1; z < dim-1; z++ {
-			for x := 1; x < dim-1; x++ {
+	for y := 1; y < Dim-1; y++ {
+		for z := 1; z < Dim-1; z++ {
+			for x := 1; x < Dim-1; x++ {
 				if !isSurface[y][z][x] {
 					r.ids[y][z][x] = 0
 				}
@@ -92,9 +92,9 @@ func (r *Region) Hollow() {
 func (r *Region) CountBlocks() {
 	fmt.Print("Counting blocks...")
 	numBlocks := 0
-	for y := 1; y < dim-1; y++ {
-		for z := 1; z < dim-1; z++ {
-			for x := 1; x < dim-1; x++ {
+	for y := 1; y < Dim-1; y++ {
+		for z := 1; z < Dim-1; z++ {
+			for x := 1; x < Dim-1; x++ {
 				if r.ids[y][z][x] != 0 {
 					numBlocks++
 				}
@@ -124,9 +124,9 @@ func (r *Region) CreateDump() {
 		binary.Write(f, binary.BigEndian, []byte(paletteStr))
 	}
 	var dataBuffer [256 * 256 * 256 * 4]byte
-	for y := 0; y < dim; y++ {
-		for z := 0; z < dim; z++ {
-			for x := 0; x < dim; x++ {
+	for y := 0; y < Dim; y++ {
+		for z := 0; z < Dim; z++ {
+			for x := 0; x < Dim; x++ {
 				bufferIdx := y*256*256*4 + z*256*4 + x*4
 				binary.BigEndian.PutUint32(dataBuffer[bufferIdx:], uint32(r.ids[y][z][x]))
 			}
@@ -149,9 +149,9 @@ func (r *Region) Validate() {
 			}
 		}
 	}
-	for y := 0; y < dim; y++ {
-		for z := 0; z < dim; z++ {
-			for x := 0; x < dim; x++ {
+	for y := 0; y < Dim; y++ {
+		for z := 0; z < Dim; z++ {
+			for x := 0; x < Dim; x++ {
 				if r.ids[y][z][x] < 0 {
 					errorMsg := fmt.Sprintf("Block id (%d) was less than zero", r.ids[y][z][x])
 					panic(errorMsg)
