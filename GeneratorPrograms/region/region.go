@@ -102,6 +102,7 @@ func (r *Region) CountBlocks() {
 		}
 	}
 	fmt.Printf("\rCounted a total of %d non-air blocks in the region\n", numBlocks)
+	fmt.Printf("This would take roughly %.3f days (%.3f hours) to build\n", float64(numBlocks)/15/60/60/24, float64(numBlocks)/15/60/60)
 }
 
 func (r *Region) CreateDump() {
