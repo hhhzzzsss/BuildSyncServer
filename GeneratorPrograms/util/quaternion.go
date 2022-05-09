@@ -46,6 +46,22 @@ func (q Quaternion) Square() Quaternion {
 	}
 }
 
+func (q Quaternion) Cube() Quaternion {
+	q2 := Quaternion{
+		q.W * q.W,
+		q.X * q.X,
+		q.Y * q.Y,
+		q.Z * q.Z,
+	}
+	rTemp := 3*q2.W - q2.X - q2.Y - q2.Z
+	return Quaternion{
+		q.W * (q2.W - 3*q2.X - 3*q2.Y - 3*q2.Z),
+		q.X * rTemp,
+		q.Y * rTemp,
+		q.Z * rTemp,
+	}
+}
+
 func (t Quaternion) LengthSquared() float64 {
 	return t.W*t.W + t.X*t.X + t.Y*t.Y + t.Z*t.Z
 }
