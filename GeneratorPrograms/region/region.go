@@ -3,6 +3,7 @@ package region
 import (
 	"encoding/binary"
 	"fmt"
+	"math"
 	"os"
 	"unicode"
 
@@ -23,10 +24,16 @@ func (r *Region) AddPaletteBlock(block string) {
 }
 
 func (r *Region) Set(x, y, z, id int) {
+	if !IsInRange(x, y, z) {
+		return
+	}
 	r.ids[y][z][x] = id
 }
 
 func (r *Region) Get(x, y, z int) int {
+	if !IsInRange(x, y, z) {
+		return 0
+	}
 	return r.ids[y][z][x]
 }
 
@@ -59,6 +66,27 @@ func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 		bar.Play(y + 1)
 	}
 	bar.Finish()
+}
+
+func (r *Region) ForEachInSphere(cx, cy, cz, radius float64, f func(x, y, z int)) {
+	x1 := int(math.Ceil(cx - radius))
+	y1 := int(math.Ceil(cy - radius))
+	z1 := int(math.Ceil(cz - radius))
+	x2 := int(math.Floor(cx + radius))
+	y2 := int(math.Floor(cy + radius))
+	z2 := int(math.Floor(cz + radius))
+	for by := y1; by <= y2; by++ {
+		for bz := z1; bz <= z2; bz++ {
+			for bx := x1; bx <= x2; bx++ {
+				dx := float64(bx) + 0.5 - cx
+				dy := float64(by) + 0.5 - cy
+				dz := float64(bz) + 0.5 - cz
+				if dx*dx+dy*dy+dz*dz <= radius*radius {
+					f(bx, by, bz)
+				}
+			}
+		}
+	}
 }
 
 func (r *Region) Hollow() {
@@ -164,4 +192,8 @@ func (r *Region) Validate() {
 			}
 		}
 	}
+}
+
+func IsInRange(x, y, z int) bool {
+	return x >= 0 && x < Dim && y >= 0 && y < Dim && z >= 0 && z < Dim
 }
