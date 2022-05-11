@@ -68,7 +68,7 @@ func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 	bar.Finish()
 }
 
-func (r *Region) ForEachInSphere(cx, cy, cz, radius float64, f func(x, y, z int)) {
+func (r *Region) ForEachInSphere(cx, cy, cz, radius float64, f func(x, y, z int, rad2 float64)) {
 	x1 := int(math.Ceil(cx - radius))
 	y1 := int(math.Ceil(cy - radius))
 	z1 := int(math.Ceil(cz - radius))
@@ -81,8 +81,9 @@ func (r *Region) ForEachInSphere(cx, cy, cz, radius float64, f func(x, y, z int)
 				dx := float64(bx) + 0.5 - cx
 				dy := float64(by) + 0.5 - cy
 				dz := float64(bz) + 0.5 - cz
-				if dx*dx+dy*dy+dz*dz <= radius*radius {
-					f(bx, by, bz)
+				rad2 := dx*dx + dy*dy + dz*dz
+				if rad2 <= radius*radius {
+					f(bx, by, bz, rad2)
 				}
 			}
 		}
