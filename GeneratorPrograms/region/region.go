@@ -117,6 +117,40 @@ func (r *Region) Hollow() {
 	}
 }
 
+func (r *Region) SelectiveHollow(id int) {
+	fmt.Println("Hollowing...")
+	var isSurface [Dim][Dim][Dim]bool
+	for y := 1; y < Dim-1; y++ {
+		for z := 1; z < Dim-1; z++ {
+			for x := 1; x < Dim-1; x++ {
+				if r.ids[y][z][x] != id {
+					continue
+				}
+				if r.ids[y][z][x+1] != id ||
+					r.ids[y][z][x-1] != id ||
+					r.ids[y][z+1][x] != id ||
+					r.ids[y][z-1][x] != id ||
+					r.ids[y+1][z][x] != id ||
+					r.ids[y-1][z][x] != id {
+					isSurface[y][z][x] = true
+				}
+			}
+		}
+	}
+	for y := 1; y < Dim-1; y++ {
+		for z := 1; z < Dim-1; z++ {
+			for x := 1; x < Dim-1; x++ {
+				if r.ids[y][z][x] != id {
+					continue
+				}
+				if !isSurface[y][z][x] {
+					r.ids[y][z][x] = 0
+				}
+			}
+		}
+	}
+}
+
 func (r *Region) CountBlocks() {
 	fmt.Print("Counting blocks...")
 	numBlocks := 0
