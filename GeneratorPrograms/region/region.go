@@ -39,7 +39,7 @@ func (r *Region) Get(x, y, z int) int {
 
 func (r *Region) ForEach(idGenerator func(x, y, z int) int) {
 	var bar util.ProgressBar
-	bar.Initialize(256)
+	bar.Initialize(Dim)
 	for y := 0; y < Dim; y++ {
 		for z := 0; z < Dim; z++ {
 			for x := 0; x < Dim; x++ {
@@ -53,7 +53,7 @@ func (r *Region) ForEach(idGenerator func(x, y, z int) int) {
 
 func (r *Region) ForEachNormalized(idGenerator func(x, y, z float64) int) {
 	var bar util.ProgressBar
-	bar.Initialize(256)
+	bar.Initialize(Dim)
 	for y := 0; y < Dim; y++ {
 		for z := 0; z < Dim; z++ {
 			for x := 0; x < Dim; x++ {
