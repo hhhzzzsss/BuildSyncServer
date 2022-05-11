@@ -217,6 +217,6 @@ func (s Skeleton) ForEachNode(f func(node *SkeletonNode)) {
 	bar.Finish()
 }
 
-func (n *SkeletonNode) GetThickeness() float64 {
+func (n *SkeletonNode) GetThickness() float64 {
 	return n.thickness
 }
