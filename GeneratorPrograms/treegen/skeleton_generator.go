@@ -52,7 +52,10 @@ type GeneratorSettings struct {
 
 	BranchPower    float64
 	BranchDecay    float64
-	TrunkThickness float64
+	BaseThickness  float64
+	BaseBulge      float64
+	TaperThreshold float64
+	TaperRate      float64 // should be less than StepSize to have an effect
 
 	BalancingThreshold int
 }
@@ -66,7 +69,10 @@ func GetDefaultSettings() GeneratorSettings {
 
 		BranchPower:    2,
 		BranchDecay:    0,
-		TrunkThickness: 15,
+		BaseThickness:  15,
+		BaseBulge:      0,
+		TaperThreshold: math.Inf(1),
+		TaperRate:      0.7,
 
 		BalancingThreshold: 20,
 	}
@@ -87,7 +93,9 @@ func GenerateSkeleton(roots []*SkeletonNode, attractors []*Attractor, settings G
 	fmt.Print("Calculating node diameters...")
 	for _, root := range roots {
 		calculateThickness(root, &settings)
-		scaleThickness(root, settings.TrunkThickness/root.thickness)
+		scaleThickness(root, settings.BaseThickness/root.thickness)
+		root.thickness += settings.BaseBulge
+		taperThickness(root, &settings)
 	}
 	fmt.Print(" Done.\n")
 
@@ -200,6 +208,15 @@ func scaleThickness(node *SkeletonNode, factor float64) {
 	}
 }
 
+func taperThickness(node *SkeletonNode, settings *GeneratorSettings) {
+	if node.parent != nil && node.thickness >= settings.TaperThreshold {
+		node.thickness = math.Max(node.thickness, node.parent.thickness-settings.TaperRate/2)
+	}
+	for _, child := range node.children {
+		taperThickness(child, settings)
+	}
+}
+
 func (s *Skeleton) buildNodeCache(node *SkeletonNode) {
 	s.nodeCache = append(s.nodeCache, node)
 	for _, child := range node.children {
@@ -219,4 +236,8 @@ func (s Skeleton) ForEachNode(f func(node *SkeletonNode)) {
 
 func (n *SkeletonNode) GetThickness() float64 {
 	return n.thickness
+}
+
+func (n *SkeletonNode) IsRoot() bool {
+	return n.parent == nil
 }
