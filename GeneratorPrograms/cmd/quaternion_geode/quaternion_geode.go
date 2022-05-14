@@ -33,7 +33,7 @@ func main() {
 		y = y * scale
 		z = z*scale + 0.2
 		Z := util.MakeQuaternion(x, y, z, 0)
-		C := util.MakeQuaternion(-2, 6, 15, -6).Scale(1. / 22.)
+		C := util.MakeQuaternion(-2, 6, 15, -6).Scale(1. / 22.) // C parameter taken from https://www.shadertoy.com/view/3tsyzl
 		dZLen := 1.
 		ZLen2 := Z.LengthSquared()
 		escapeTime := 256
