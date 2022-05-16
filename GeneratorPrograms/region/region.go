@@ -119,7 +119,7 @@ func (r *Region) Hollow() {
 }
 
 func (r *Region) SelectiveHollow(id int) {
-	fmt.Println("Hollowing...")
+	fmt.Printf("Hollowing blocks with id %d...\n", id)
 	var isSurface [Dim][Dim][Dim]bool
 	for y := 1; y < Dim-1; y++ {
 		for z := 1; z < Dim-1; z++ {
