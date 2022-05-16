@@ -12,6 +12,7 @@ type SkeletonNode struct {
 	pos       [3]float64
 	children  []*SkeletonNode
 	parent    *SkeletonNode
+	root      *SkeletonNode
 	thickness float64
 }
 
@@ -28,12 +29,15 @@ func (node *Attractor) GetDim(dim int) float64 {
 }
 
 func NewSkeletonNode(x, y, z float64) *SkeletonNode {
-	return &SkeletonNode{
+	node := &SkeletonNode{
 		[3]float64{x, y, z},
 		make([]*SkeletonNode, 0),
 		nil,
+		nil,
 		0,
 	}
+	node.root = node
+	return node
 }
 
 func NewAttractor(x, y, z float64) *Attractor {
@@ -152,6 +156,7 @@ func skeletonIteration(kdtree *KDTree, attractors *[]*Attractor, settings Genera
 		newNodePos := PointToVec3d(node).Add(attraction)
 		newNode := NewSkeletonNode(newNodePos.X, newNodePos.Y, newNodePos.Z)
 		newNode.parent = node
+		newNode.root = node.root
 		if PointDistSq(newNode, newNode.parent) < 0.1*settings.StepSize {
 			continue
 		}
