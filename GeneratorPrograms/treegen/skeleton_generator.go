@@ -246,3 +246,7 @@ func (n *SkeletonNode) GetThickness() float64 {
 func (n *SkeletonNode) IsRoot() bool {
 	return n.parent == nil
 }
+
+func (n *SkeletonNode) GetRoot() *SkeletonNode {
+	return n.root
+}
