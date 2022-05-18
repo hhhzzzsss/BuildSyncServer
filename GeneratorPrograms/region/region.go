@@ -23,6 +23,10 @@ func (r *Region) AddPaletteBlock(block string) {
 	r.palette = append(r.palette, block)
 }
 
+func (r *Region) PaletteSize() int {
+	return len(r.palette)
+}
+
 func (r *Region) Set(x, y, z, id int) {
 	if !IsInRange(x, y, z) {
 		return
